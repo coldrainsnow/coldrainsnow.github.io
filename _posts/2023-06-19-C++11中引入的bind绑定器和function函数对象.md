@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "test1"
+title: "C++11中引入的bind绑定器和function函数对象"
 tags: C++
 
 ---
@@ -254,7 +254,7 @@ int main()
 
 func1 = hello1;
 
-func4 = [](int a, int b)->int {return a + b; };
+func4 = []\(int a, int b)->int {return a + b; };
 
 func5 = &Test::hello;
 

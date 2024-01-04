@@ -4,11 +4,11 @@ title: "AWS-SDK-CPP遇到的问题"
 tags: 项目经验
 ---
 
-# 1.问题
+## 1.问题
 
 程序在启动加载时非常慢，后来排查到时这行代码有问题Aws::S3::S3Client client
 
-# 2.解决办法
+## 2.解决办法
 
 在查AWS-SDK-CPP的仓库时，发现也有人提到了类似的问题，可以加个环境变量
 
@@ -24,7 +24,7 @@ AWS_EC2_METADATA_DISABLED=true
 
 至于原因的话，是构造函数里面的问题，涉及的可能比较多，先不讨论了
 
-# 3.官方回答
+## 3.官方回答
 
 Sorry we are working on a better way to do it but currently the only way to avoid these involve environment variables. If the AWS_EC2_METADATA_DISABLED is problematic for you, you could also set AWS_DEFAULT_REGION or AWS_REGION to your region...
 Though honestly if having the env variable as true causes troubles later on, the best workaround I can think of is having something like:
@@ -53,7 +53,7 @@ SetEnvironmentVariable("AWS_EC2_METADATA_DISABLED", "true");
 
 所以最简单的方法，直接在电脑环境变量加上就好
 
-# 4.参考
+## 4.参考
 
 [c++ - Aws::S3::S3Client constructor very slow - Stack Overflow](https://stackoverflow.com/questions/63725308/awss3s3client-constructor-very-slow)
 

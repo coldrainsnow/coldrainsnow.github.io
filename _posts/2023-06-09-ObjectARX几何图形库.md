@@ -5,13 +5,13 @@ tags: CAD
 
 ---
 
-# 1.引言
+## 1.引言
 
 这几天在做CAD二次开发，涉及到几何类，略有不解，后又发现ObjectARX开发指南，所以翻译下官方的
 
 AcGe库提供很多用于表示2D和3D几何图形的类
 
-# 2.AcGe库概述
+## 2.AcGe库概述
 
 AcGe 库包括一组广泛的类，用于表示常用的几何图形，例如点、线、曲线和曲面。它为几何图形提供了可供任何 Autodesk 应用程序使用的通用表示形式。该库是纯数学的;虽然它的类不直接处理数据库或图形，但它的许多类被 AcDb 和 AcGi 库使用。
 
@@ -29,11 +29,11 @@ AcGe 库的类层次结构如下所示：
 
 ![img](https://help.autodesk.com/cloudhelp/2023/CHS/OARXMAC-DevGuide/images/GUID-FAC81CA1-6875-4A76-9DED-4696F43C547C.png)
 
-# 3.参数化几何
+## 3.参数化几何
 
 分为曲线Curves和表面Surfaces，由于我只用到了Curves，所以只说这个
 
-## 3.1曲线Curves
+### 3.1曲线Curves
 
 AcGe 库中的曲线和曲面是参数化的。曲线是使用带有一个参数（如 f（u））的赋值器函数将实线的区间映射到 2D 或 3D 建模空间的结果。同样，曲面是使用基于两个参数（例如 f（， ））的赋值器函数从 2D 域到 3D 建模空间的映射。每个 2D 和 3D 曲线类都有一个返回参数间隔的函数。此函数有两种形式：第一种返回间隔;第二个返回曲线的间隔以及起点和终点。uvgetInterval()
 
@@ -41,7 +41,7 @@ AcGe 库中的曲线和曲面是参数化的。曲线是使用带有一个参数
 
 如果间隔在任一方向上不受限制，则起点和终点没有意义。
 
-### 3.1.1特性
+#### 3.1.1特性
 
 曲线具有以下特征：
 
@@ -124,7 +124,7 @@ AcGeCurve3d::evalPoint(
     AcGeVector3dArray& derivArray) const;
 ```
 
-# 4.References
+## 4.References
 
 - [ObjectARX官方文档](https://help.autodesk.com/view/OARXMAC/2023/CHS/?guid=GUID-BCD4C0B3-CCAA-4C10-9ABC-394CF6D52CA5)
 

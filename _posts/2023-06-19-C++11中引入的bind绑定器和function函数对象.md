@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "C++11中引入的bind绑定器和function函数对象"
+title: "test1"
 tags: C++
 
 ---

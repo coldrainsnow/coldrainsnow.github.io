@@ -4,6 +4,50 @@ title: Effective C++读书笔记
 tags: [C++]
 ---
 
+条款3：尽可能使用const
+
+```cpp
+char greeting[] = "Hello";
+const char * p = greeting; //指针指向的内容不能变，但是指针本身的值可以变
+char * const p = greeting; //指针本身的值不能变，但是指针指向的内容可以变
+const char * const p = greeting; //上面说的两个都不能变
+```
+
+```cpp
+char abc[] = "world"
+const char * p = "Hello";
+*p = wprld // 错误
+p = abc; // 正确
+std::cout << *p << std::endl; // 输出的是'w' 因为这是取数组的第一个字符
+```
+
+```cpp
+char abc[] = "world";
+char ddd[] = "hello";
+
+char* const p = ddd;
+//p = abc; 错误
+*p = 'w';
+std::cout << *p << std::endl; // 输出'w'
+```
+
+const在*的前后位置，代表对不同的东西const
+
+const在*左侧，代表指向的内容是const
+
+const在*右侧，代表指针本身是const
+
+像下面这两个函数的参数其实是一样的，都是对指向内容的const
+
+```cpp
+void func(const Widget * pw);
+void func(Widget const * pw);
+```
+
+p21 p22没怎么看懂
+
+
+
 条款20：能用引用就不用值传递
 
 ```cpp

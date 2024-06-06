@@ -48,6 +48,62 @@ p21 p22没怎么看懂
 
 
 
+条款5：了解C++默默编写并调用了哪些函数
+
+```cpp
+// 写一个空类
+class Empty {};
+// 其实就是写了一个这个
+class Empty {
+public:
+	Empty() {} //default构造函数
+	Empty(const Empty& rhs) {} //copy构造函数
+	~Empty() {} //析构
+
+	Empty& operator=(const Empty& rhs) {} // copy assignment操作符
+};
+// 但只有当这些函数被调用时，才会被编译器创建出来
+// 比如下面的每行代码都会造成编译器的创建
+Empty e1; //default构造函数
+Empty e2(e1);//copy构造函数
+e2 = e1;//copy assignment操作符
+```
+
+注意：
+
+1）析构函数被编译器创建时候是非虚的，也就是non-virtual，但如果这个类的基类的构造函数是虚函数，那创建出来的析构也是虚的
+
+2）如果你自己写了一个构造函数，那编译器就不会创建default构造函数
+
+3）为什么copy assignment操作符返回值是Empty&
+
+这种返回类型的设计是为了支持连续赋值操作（chained assignment）。在 C++ 中，允许通过连续调用 `operator=` 实现链式赋值，例如 `a = b = c = d`。为了支持这种语法，`operator=` 必须返回一个引用，这样可以将被赋值的对象的引用传递给下一个赋值操作。
+
+在这个例子中，`Empty& operator=(const Empty& rhs)` 返回一个 `Empty` 对象的引用，允许像这样使用：
+
+```cpp
+Empty a, b, c, d;
+a = b = c = d;
+```
+
+如果 `operator=` 返回的是一个普通的 `Empty` 对象而不是引用，那么连续赋值操作将不起作用，因为每次赋值都会创建一个临时的 `Empty` 对象，而不是在原始对象上进行操作。
+
+4）所有编译器产出的函数都是public
+
+
+
+条款6：为驳回编译器自动（暗自）提供的机能，可将相应的成员函数声明为private并且不给实现，使用像Uncopyable这样的基类也是一种做法
+
+
+
+条款7：
+
+1）polymorphic（带多态性质的）base classes应该声明一个virtual析构函数。如果class带有任何的virtual函数，则他的析构也应该是virtual
+
+2）Classes的设计目的如果不是作为基类使用，或者不是为了多态性，就不该声明virtual析构函数
+
+
+
 条款20：能用引用就不用值传递
 
 ```cpp

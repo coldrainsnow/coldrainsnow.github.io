@@ -7,7 +7,7 @@ tags: C++
 
 C++语法我是真的弱，所以这一段再把基础知识学一学吧，因为本来要做项目的，但是总是被语法给难倒，果真这还是基础和内功
 
-## 1.bind1st和bind2nd什么时候会用到
+# 1.bind1st和bind2nd什么时候会用到
 
 ```cpp
 #include <iostream>
@@ -74,7 +74,7 @@ int main()
 }
 ```
 
-## 2.bind1st和bind2nd底层原理
+# 2.bind1st和bind2nd底层原理
 
 ```cpp
 #include <iostream>
@@ -181,9 +181,9 @@ int main()
 }
 ```
 
-## 3.function函数对象类型的应用示例
+# 3.function函数对象类型的应用示例
 
-### 3.1.function的应用
+## 3.1.function的应用
 
 
 
@@ -244,7 +244,7 @@ int main()
 //2.function<函数类型(参数)>  func1  使用时候也是得func1(参数)
 ```
 
-### 3.2.function 的好处
+## 3.2.function 的好处
 
 那说了这么多，function的好处到底是哪里呢，为什么我要这样子干，而不是直接调用函数呢
 
@@ -345,7 +345,7 @@ int main()
 
 像lambda表达式只能作用在语句中，而有了function就可以随心所欲的用了，要不然就得重新写表达式或者重新绑定了
 
-## 4.模板的完全特例化和部分特例化
+# 4.模板的完全特例化和部分特例化
 
 ```cpp
 template<typename T>
@@ -454,7 +454,7 @@ int main()
 }
 ```
 
-## 5.模板的实参推演
+# 5.模板的实参推演
 
 ```cpp
 template<typename T>
@@ -640,7 +640,7 @@ private:
 
 其中上面的类模板声明不能删除，如果删除了 `template<typename Fty> class myfunction{};` 这一行代码，那么在定义特化版本的 `myfunction` 类模板时，编译器将无法找到 `myfunction` 类模板的原始声明。这将导致编译错误。因此，即使没有直接使用 `template<typename Fty> class myfunction{};` 这个类模板，它仍然是必需的，因为它为特化版本的 `myfunction` 类模板提供了原始声明。
 
-## 7.Bind
+# 7.Bind
 
 std::bind绑定器，也是个类模板，C++11引入的
 

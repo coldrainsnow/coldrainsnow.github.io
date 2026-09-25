@@ -421,6 +421,11 @@ img { max-width: 100%; height: auto; }
   list-style: circle;
 }
 .toc-sub li { margin: 1px 0; }
+/* third level: `###` nested under a `##` */
+.toc-sub .toc-sub {
+  font-size: 12.5px;
+  list-style: square;
+}
 
 .toc-list a { color: var(--ink); }
 .toc-list a:hover,
@@ -474,18 +479,22 @@ img { max-width: 100%; height: auto; }
   scroll-margin-top: 24px;
 }
 
-.doc-body h1 { margin: 1.8em 0 .7em; font-size: 21px; color: var(--accent-dark); }
-.doc-body h2 {
+/* `#` is the top level inside an article, so it carries the section rule that
+   used to sit on `##`. The scale then descends 22 → 19 → 17.5 → 16.5 → 15.5,
+   i.e. every level stays at or above the 16.5px body size — before this change
+   `###` was exactly body size and `####` was smaller than the body text. */
+.doc-body h1 {
   margin: 2em 0 .8em;
   padding-bottom: .3em;
   border-bottom: 1px solid var(--rule);
-  font-size: 19px;
+  font-size: 22px;
   color: var(--accent);
 }
-.doc-body h3 { margin: 1.6em 0 .6em; font-size: 16.5px; color: var(--accent-dark); }
-.doc-body h4 { margin: 1.4em 0 .5em; font-size: 15px; color: var(--ink); }
+.doc-body h2 { margin: 1.8em 0 .7em; font-size: 19px; color: var(--accent-dark); }
+.doc-body h3 { margin: 1.6em 0 .6em; font-size: 17.5px; color: var(--accent-dark); }
+.doc-body h4 { margin: 1.4em 0 .5em; font-size: 16.5px; color: var(--ink); }
 .doc-body h5,
-.doc-body h6 { margin: 1.2em 0 .5em; font-size: 14.5px; color: var(--ink-soft); }
+.doc-body h6 { margin: 1.2em 0 .5em; font-size: 15.5px; color: var(--ink-soft); }
 
 .doc-body ul,
 .doc-body ol {

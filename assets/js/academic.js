@@ -19,8 +19,13 @@
   onReady(function () {
     var body = document.getElementById('doc-body');
     var headings = body
-      ? Array.prototype.slice.call(body.querySelectorAll('h2, h3'))
+      ? Array.prototype.slice.call(body.querySelectorAll('h1, h2, h3'))
       : [];
+
+    /* A heading with no text would show up as a blank row in the outline. */
+    headings = headings.filter(function (heading) {
+      return heading.textContent.trim() !== '';
+    });
 
     var toc = document.getElementById('doc-toc');
     var tocList = document.getElementById('doc-toc-list');
@@ -32,39 +37,61 @@
       }
     });
 
-    /* ---- build a nested <ol> (h3s grouped under the preceding h2) ---- */
+    /* ---- build the outline: `#` is level 1, `##` level 2, `###` level 3 ----
+       The headings are folded into a tree first, so a document that legally
+       skips a level (`#` straight to `###`) still produces a valid nested <ol>
+       instead of an orphaned sub-list. */
     var tocLinks = null;
 
     if (headings.length >= 3 && toc && tocList) {
-      var links = [];
-      var linkById = {};
-      var subList = null;
+      var LEVEL = { H1: 1, H2: 2, H3: 3 };
+
+      var root = { level: 0, children: [] };
+      var path = [root];
 
       headings.forEach(function (heading) {
-        var item = document.createElement('li');
-        item.className = heading.tagName === 'H3' ? 'toc-h3' : 'toc-h2';
-
-        var link = document.createElement('a');
-        link.setAttribute('href', '#' + heading.id);
-        link.textContent = heading.textContent.trim();
-        item.appendChild(link);
-
-        if (heading.tagName === 'H3') {
-          /* nest sub-headings inside the current section */
-          if (!subList) {
-            subList = document.createElement('ol');
-            subList.className = 'toc-sub';
-            (tocList.lastElementChild || tocList).appendChild(subList);
-          }
-          subList.appendChild(item);
-        } else {
-          tocList.appendChild(item);
-          subList = null;
+        var level = LEVEL[heading.tagName];
+        if (!level) {
+          return;
         }
 
-        links.push(link);
-        linkById[heading.id] = link;
+        /* climb back up to the nearest shallower heading */
+        while (path.length > 1 && path[path.length - 1].level >= level) {
+          path.pop();
+        }
+
+        var node = { level: level, heading: heading, children: [] };
+        path[path.length - 1].children.push(node);
+        path.push(node);
       });
+
+      var links = [];
+      var linkById = {};
+
+      var render = function (nodes, list) {
+        nodes.forEach(function (node) {
+          var item = document.createElement('li');
+          item.className = 'toc-h' + node.level;
+
+          var link = document.createElement('a');
+          link.setAttribute('href', '#' + node.heading.id);
+          link.textContent = node.heading.textContent.trim();
+          item.appendChild(link);
+
+          if (node.children.length) {
+            var sub = document.createElement('ol');
+            sub.className = 'toc-sub';
+            render(node.children, sub);
+            item.appendChild(sub);
+          }
+
+          list.appendChild(item);
+          links.push(link);
+          linkById[node.heading.id] = link;
+        });
+      };
+
+      render(root.children, tocList);
 
       tocLinks = { links: links, linkById: linkById };
       toc.hidden = false;

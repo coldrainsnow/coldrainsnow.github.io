@@ -6,8 +6,6 @@ layout: default
 <div class="paper paper--doc">
   {% include doc-navbar.html %}
 
-  <div class="read-progress" id="read-progress" aria-hidden="true"></div>
-
   <article class="doc" itemscope itemtype="http://schema.org/BlogPosting">
     <header class="doc-head">
       <h1 class="doc-title" itemprop="headline">{{ page.title }}</h1>
@@ -60,20 +58,4 @@ layout: default
       <p class="doc-copy"><a href="{{ '/' | relative_url }}">返回文章索引</a></p>
     </footer>
   </article>
-
-  {% comment %} 常驻的「我在哪一节」指示器：折叠时显示当前小节，展开是完整目录 {% endcomment %}
-  <div class="doc-outline" id="doc-outline" hidden>
-    <button class="outline-toggle" id="outline-toggle" type="button"
-            aria-expanded="false" aria-controls="outline-panel">
-      <span class="outline-mark" aria-hidden="true">&sect;</span>
-      <span class="outline-current" id="outline-current">正文</span>
-      <span class="outline-caret" aria-hidden="true"></span>
-    </button>
-    <div class="outline-panel" id="outline-panel">
-      <p class="outline-head">目 录</p>
-      <nav class="outline-nav" aria-label="目录">
-        <ol class="toc-list" id="outline-list"></ol>
-      </nav>
-    </div>
-  </div>
 </div>

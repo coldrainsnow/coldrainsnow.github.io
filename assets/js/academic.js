@@ -1,8 +1,7 @@
 /* =============================================================================
    academic.js — document behaviours
-   · builds the table of contents (inline block + floating outline)
-   · tracks the section currently being read and shows its name
-   · reading progress bar
+   · builds the article's table of contents
+   · highlights the section currently being read
    · back-to-top button
    ========================================================================== */
 
@@ -25,14 +24,8 @@
 
     var toc = document.getElementById('doc-toc');
     var tocList = document.getElementById('doc-toc-list');
-    var outline = document.getElementById('doc-outline');
-    var outlineList = document.getElementById('outline-list');
-    var outlineToggle = document.getElementById('outline-toggle');
-    var outlinePanel = document.getElementById('outline-panel');
-    var outlineCurrent = document.getElementById('outline-current');
-    var progress = document.getElementById('read-progress');
 
-    /* Stable ids up front, so both lists can link to the same anchors. */
+    /* Stable ids up front, so the TOC links have anchors to point at. */
     headings.forEach(function (heading, index) {
       if (!heading.id) {
         heading.id = 'section-' + (index + 1);
@@ -40,7 +33,9 @@
     });
 
     /* ---- build a nested <ol> (h3s grouped under the preceding h2) ---- */
-    function buildList(listEl) {
+    var tocLinks = null;
+
+    if (headings.length >= 3 && toc && tocList) {
       var links = [];
       var linkById = {};
       var subList = null;
@@ -59,11 +54,11 @@
           if (!subList) {
             subList = document.createElement('ol');
             subList.className = 'toc-sub';
-            (listEl.lastElementChild || listEl).appendChild(subList);
+            (tocList.lastElementChild || tocList).appendChild(subList);
           }
           subList.appendChild(item);
         } else {
-          listEl.appendChild(item);
+          tocList.appendChild(item);
           subList = null;
         }
 
@@ -71,65 +66,29 @@
         linkById[heading.id] = link;
       });
 
-      return { links: links, linkById: linkById };
+      tocLinks = { links: links, linkById: linkById };
+      toc.hidden = false;
+      /* long articles start collapsed so the TOC never buries the content */
+      toc.open = headings.length <= 12;
     }
 
-    var tocLinks = null;
-    var outlineLinks = null;
-
-    if (headings.length >= 3) {
-      if (toc && tocList) {
-        tocLinks = buildList(tocList);
-        toc.hidden = false;
-        /* long articles start collapsed so the TOC never buries the content */
-        toc.open = headings.length <= 12;
-      }
-      if (outline && outlineList) {
-        outlineLinks = buildList(outlineList);
-        outline.hidden = false;
-      }
-    }
-
-    /* ---- reflect the active section everywhere ---- */
-    var paint = function (activeId) {
-      [tocLinks, outlineLinks].forEach(function (set) {
-        if (!set) {
-          return;
-        }
-        set.links.forEach(function (link) {
-          link.classList.remove('is-active');
-        });
-        if (activeId && set.linkById[activeId]) {
-          set.linkById[activeId].classList.add('is-active');
-        }
-      });
-
-      if (outlineCurrent) {
-        var active = activeId ? document.getElementById(activeId) : null;
-        outlineCurrent.textContent = active ? active.textContent.trim() : '正文';
-      }
-
-      /* keep the highlighted row visible inside an open outline */
-      if (
-        activeId &&
-        outlineLinks &&
-        outline &&
-        outline.classList.contains('is-open') &&
-        outlineLinks.linkById[activeId]
-      ) {
-        outlineLinks.linkById[activeId].scrollIntoView({ block: 'nearest' });
-      }
-    };
-
-    /* ---- follow the heading currently being read ----
+    /* ---- highlight the section currently being read ----
        A "reading line" 15% down the viewport decides the active section: it is
        the last heading whose top has crossed that line. An IntersectionObserver
-       band looks tempting but goes blank *between* two headings, which made the
-       label flip back to "正文" while you were still inside a section. */
-    if (headings.length && (tocLinks || outlineLinks || outlineCurrent)) {
-      var tops = [];
+       band looks tempting but goes blank *between* two headings, which dropped
+       the highlight while you were still inside a section. */
+    if (tocLinks) {
+      var tops = null;
       var lastActive = null;
-      var lastMeasure = 0;
+
+      var paint = function (activeId) {
+        tocLinks.links.forEach(function (link) {
+          link.classList.remove('is-active');
+        });
+        if (activeId && tocLinks.linkById[activeId]) {
+          tocLinks.linkById[activeId].classList.add('is-active');
+        }
+      };
 
       var measure = function () {
         tops = headings.map(function (heading) {
@@ -138,13 +97,10 @@
             top: heading.getBoundingClientRect().top + window.pageYOffset
           };
         });
-        lastMeasure = Date.now();
       };
 
       var sync = function () {
-        /* heading positions move while the webfont swaps in and images load,
-           so refresh them periodically instead of trusting a one-time measure */
-        if (Date.now() - lastMeasure > 400) {
+        if (!tops) {
           measure();
         }
 
@@ -160,7 +116,7 @@
         }
 
         /* at the very bottom the last heading may never reach the reading line,
-           so the label would otherwise stay stuck on the second-to-last section */
+           so the highlight would otherwise stay stuck on the second-to-last one */
         if (
           tops.length &&
           window.pageYOffset + window.innerHeight >=
@@ -176,82 +132,37 @@
         paint(current);
       };
 
-      /* sync() is cheap — it early-returns unless the section actually changed,
-         and the expensive measure() is throttled — so no rAF indirection here.
-         rAF is not serviced in every context (headless, background tabs) and
-         dropping it keeps the indicator correct rather than silently stale. */
-      var remeasure = function () {
-        measure();
+      /* Invalidate, then re-decide. */
+      var refresh = function () {
+        tops = null;
         sync();
       };
 
-      measure();
+      /* Scrolling never moves a heading, so the measured positions stay valid
+         the whole time you read — only a *layout* change invalidates them.
+         Re-measuring on every scroll event would cost one
+         getBoundingClientRect() per heading per frame (85 calls here); instead
+         we measure once and re-measure only when something actually reflows.
+         A time-based throttle is not good enough: for the rest of the window
+         the highlight points at the wrong section after a font swap, an image
+         finishing, or the TOC being opened. */
       sync();
       window.addEventListener('scroll', sync, { passive: true });
-      window.addEventListener('resize', remeasure);
-      window.addEventListener('load', remeasure);
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(remeasure);
+      window.addEventListener('resize', refresh);
+      window.addEventListener('load', refresh);
+      if (toc) {
+        /* expanding the TOC pushes the whole article down */
+        toc.addEventListener('toggle', refresh);
       }
-    }
-
-    /* ---- floating outline panel ---- */
-    if (outline && outlineToggle && outlinePanel) {
-      var setOpen = function (open) {
-        outline.classList.toggle('is-open', open);
-        outlineToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      };
-
-      outlineToggle.addEventListener('click', function () {
-        setOpen(!outline.classList.contains('is-open'));
-      });
-
-      /* jumping to a section closes the panel — you want to read, not browse */
-      outlinePanel.addEventListener('click', function (event) {
-        if (event.target.closest('a')) {
-          setOpen(false);
-        }
-      });
-
-      document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && outline.classList.contains('is-open')) {
-          setOpen(false);
-          outlineToggle.focus();
-        }
-      });
-
-      document.addEventListener('click', function (event) {
-        if (
-          outline.classList.contains('is-open') &&
-          !outline.contains(event.target)
-        ) {
-          setOpen(false);
-        }
-      });
-    }
-
-    /* ---- reading progress ---- */
-    if (progress && body) {
-      var updateProgress = function () {
-        var rect = body.getBoundingClientRect();
-        var start = rect.top + window.pageYOffset;
-        var total = body.offsetHeight - window.innerHeight;
-        var ratio = total > 0 ? (window.pageYOffset - start) / total : 0;
-
-        if (ratio < 0) {
-          ratio = 0;
-        }
-        if (ratio > 1) {
-          ratio = 1;
-        }
-
-        progress.style.transform = 'scaleX(' + ratio + ')';
-        progress.classList.toggle('is-visible', ratio > 0.01 && ratio < 0.995);
-      };
-
-      window.addEventListener('scroll', updateProgress, { passive: true });
-      window.addEventListener('resize', updateProgress);
-      updateProgress();
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(refresh);
+      }
+      if (window.ResizeObserver && body) {
+        /* catches anything that reflows the article: webfont swap, images
+           decoding, content changes. Observing .doc-body rather than <body>
+           keeps the TOC's own highlight from feeding back into a loop. */
+        new ResizeObserver(refresh).observe(body);
+      }
     }
 
     /* ---- back to top ---- */

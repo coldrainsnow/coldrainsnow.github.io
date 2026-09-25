@@ -15,9 +15,8 @@
    11. Tables, quotes, prompts, images
   12. Footer & pager
   13. Back-to-top button
-  14. Reading position (progress bar + floating outline)
-  15. Responsive
-  16. Print (real "PDF" output)
+  14. Responsive
+  15. Print (real "PDF" output)
    ========================================================================== */
 
 /* ---------- 1. Design tokens --------------------------------------------- */
@@ -29,7 +28,6 @@
   --ink-soft:     #857f78;
   --accent:       #6293a2;
   --accent-dark:  #4b7a88;
-  --accent-soft:  #eef4f6;
   --link:         #0563c1;
   --link-visited: #954f72;
   --rule:         #e4e2df;
@@ -730,130 +728,7 @@ img { max-width: 100%; height: auto; }
 #back-to-top.is-visible { opacity: 1; visibility: visible; }
 #back-to-top:hover { background: var(--accent); color: #fff; }
 
-/* ---------- 14. Reading position (progress bar + floating outline) -------- */
-
-/* 顶部细进度条：一眼看出整篇读到哪儿了 */
-.read-progress {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 30;
-  width: 100%;
-  height: 3px;
-  background: var(--accent);
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .3s ease;
-}
-.read-progress.is-visible { opacity: .85; }
-
-/* 右下角常驻的「我在哪一节」标签：折叠时显示当前小节，展开是完整目录 */
-.doc-outline {
-  position: fixed;
-  right: 22px;
-  bottom: 78px;
-  z-index: 25;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-  max-width: min(310px, calc(100vw - 40px));
-  font-family: var(--sans);
-  text-align: left;
-}
-.doc-outline[hidden] { display: none; }
-
-.outline-toggle {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  max-width: 100%;
-  margin: 0;
-  padding: 7px 13px;
-  border: 1px solid var(--rule-strong);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, .96);
-  color: var(--ink);
-  font-family: inherit;
-  font-size: 12.5px;
-  line-height: 1.4;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .14);
-}
-.outline-toggle:hover { border-color: var(--accent); color: var(--accent); }
-.outline-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-.outline-mark { flex: 0 0 auto; color: var(--accent); font-weight: var(--w-head); }
-
-.outline-current {
-  flex: 0 1 auto;
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.outline-caret {
-  flex: 0 0 auto;
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-bottom: 5px solid var(--ink-soft);
-  transition: transform .2s ease;
-}
-.doc-outline.is-open .outline-caret { transform: rotate(180deg); }
-
-.outline-panel {
-  display: none;
-  width: 100%;
-  max-height: min(52vh, 400px);
-  overflow-y: auto;
-  border: 1px solid var(--rule);
-  border-left: 3px solid var(--accent);
-  border-radius: 3px;
-  background: #fff;
-  box-shadow: 0 6px 22px rgba(0, 0, 0, .18);
-}
-.doc-outline.is-open .outline-panel { display: block; }
-
-.outline-head {
-  margin: 0;
-  padding: 9px 14px;
-  border-bottom: 1px solid var(--rule);
-  font-size: 11.5px;
-  font-weight: var(--w-ui);
-  letter-spacing: 3px;
-  color: var(--accent);
-}
-
-.outline-nav { padding: 9px 14px 12px; }
-
-/* 复用文章顶部目录的 .toc-list / .toc-sub 结构，只在这里收小字号 */
-.outline-panel .toc-list { margin: 0; padding-left: 19px; font-size: 12.5px; line-height: 1.7; }
-.outline-panel .toc-list > li { margin: 2px 0; }
-.outline-panel .toc-sub { margin: 1px 0 3px; padding-left: 1.2em; font-size: 12px; }
-
-/* 「我读到哪了」：当前小节加一条左侧竖条 + 浅底纹，
-   扫一眼就能定位，不必逐行读文字。 */
-.outline-panel .toc-list a {
-  display: block;
-  margin-left: -8px;
-  padding: 1px 6px 1px 8px;
-  border-left: 2px solid transparent;
-  border-radius: 0 3px 3px 0;
-  transition: color .15s ease, background-color .15s ease, border-color .15s ease;
-}
-.outline-panel .toc-list a.is-active {
-  border-left-color: var(--accent);
-  background: var(--accent-soft);
-  color: var(--accent-dark);
-  font-weight: var(--w-ui);
-}
-
-/* ---------- 15. Responsive ----------------------------------------------- */
+/* ---------- 14. Responsive ----------------------------------------------- */
 
 @media (max-width: 800px) {
   /* Mirror the reference site: drop the "desk" and the sheet shadow */
@@ -879,18 +754,9 @@ img { max-width: 100%; height: auto; }
   .pager-next { max-width: 100%; text-align: left; }
 
   .doc-body .highlight .rouge-gutter { display: none; }
-
-  /* 窄屏：标签贴边一点，当前小节名别占太宽 */
-  .doc-outline {
-    right: 14px;
-    bottom: 72px;
-    max-width: calc(100vw - 28px);
-  }
-  .outline-current { max-width: 44vw; }
-  .outline-panel { max-height: 46vh; }
 }
 
-/* ---------- 16. Print ---------------------------------------------------- */
+/* ---------- 15. Print ---------------------------------------------------- */
 
 @media print {
   body { background: #fff; font-size: 11.5pt; }
@@ -903,8 +769,6 @@ img { max-width: 100%; height: auto; }
   .doc-navbar,
   .doc-toc,
   .doc-foot,
-  .doc-outline,
-  .read-progress,
   #back-to-top { display: none !important; }
   .doc-body { max-width: none; }
   a { color: var(--ink); text-decoration: none; }

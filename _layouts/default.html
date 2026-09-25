@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="{{ site.lang | default: 'en' }}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#DDDDEB" />
+    {% seo %}
+    <link rel="icon" type="image/x-icon" href="{{ '/assets/img/favicons/favicon.ico' | relative_url }}" />
+    <link rel="apple-touch-icon" href="{{ '/assets/img/favicons/apple-touch-icon.png' | relative_url }}" />
+
+    <!-- 苹方风格中文字体 MiSans（小米开源，Apache-2.0，可免费商用）。
+         可变字体，150–700 字重都是真实的，不会被合成加粗。
+         用 media="print"+onload 异步加载：CDN 慢也不会卡首屏。 -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/misans@5/lib/Normal/MiSansVF.min.css"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@5/lib/Normal/MiSansVF.min.css" />
+    </noscript>
+
+    <link rel="stylesheet" href="{{ '/assets/css/academic.css' | relative_url }}" />
+  </head>
+  <body class="layout-{{ page.layout | default: 'default' }}">
+    <div class="desk">
+      {{ content }}
+    </div>
+
+    <button id="back-to-top" type="button" aria-label="回到顶部" title="回到顶部">&uarr;</button>
+
+    <script src="{{ '/assets/js/academic.js' | relative_url }}" defer></script>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+---
+layout: default
+---
+<div class="paper paper--home">
+  {% include doc-navbar.html %}
+
+  <header class="site-head">
+    <h1 class="site-title">{{ site.title }}</h1>
+    {%- if site.tagline -%}
+      <p class="site-tagline">{{ site.tagline }}</p>
+    {%- endif -%}
+    {%- if site.description -%}
+      <p class="site-desc">{{ site.description }}</p>
+    {%- endif -%}
+  </header>
+
+  <section class="index-block">
+    <h2 class="sec-title">文章索引</h2>
+
+    {%- assign posts_by_year = site.posts | group_by_exp: 'post', 'post.date | date: "%Y"' -%}
+    {%- for year in posts_by_year -%}
+      <h3 class="year-title">{{ year.name }} <span class="count">{{ year.items | size }}</span></h3>
+      <ul class="post-list">
+        {%- for post in year.items -%}
+          <li class="post-item">
+            <a class="post-link" href="{{ post.url | relative_url }}">
+              <span class="post-title">{{ post.title }}</span>
+              <span class="post-dots" aria-hidden="true"></span>
+              <span class="post-date">{{ post.date | date: "%m-%d" }}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endfor -%}
+  </section>
+
+  {%- assign all_tags = site.tags | sort -%}
+  {%- if all_tags.size > 0 -%}
+    <section class="index-block">
+      <h2 class="sec-title">标签</h2>
+      <p class="tag-cloud">
+        {%- for tag in all_tags -%}
+          {%- assign tag_url = tag[0] | slugify | url_encode | prepend: '/tags/' | append: '/' -%}
+          <a class="tag-link" href="{{ tag_url | relative_url }}">{{ tag[0] }}</a>
+        {%- endfor -%}
+      </p>
+    </section>
+  {%- endif -%}
+
+  <footer class="site-foot">
+    <p>&copy; {{ site.time | date: '%Y' }} {{ site.social.name | default: site.title }}</p>
+  </footer>
+</div>

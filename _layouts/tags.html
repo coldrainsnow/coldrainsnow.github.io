@@ -1,0 +1,40 @@
+---
+layout: default
+---
+<div class="paper paper--doc">
+  {% include doc-navbar.html %}
+
+  <article class="doc">
+    <header class="doc-head">
+      <h1 class="doc-title">{{ page.title | default: '标签' }}</h1>
+      <p class="doc-subtitle">共 {{ site.tags | size }} 个标签</p>
+    </header>
+    <hr class="doc-rule" />
+
+    <div class="doc-body">
+      {%- assign all_tags = site.tags | sort -%}
+      {%- if all_tags.size == 0 -%}
+        <p class="empty-note">目前还没有文章设置标签。</p>
+      {%- else -%}
+        {%- for tag in all_tags -%}
+          {%- assign tag_url = tag[0] | slugify | url_encode | prepend: '/tags/' | append: '/' -%}
+          <h2 id="tag-{{ tag[0] | slugify }}">
+            <a href="{{ tag_url | relative_url }}">{{ tag[0] }}</a>
+            <span class="count">{{ tag[1] | size }}</span>
+          </h2>
+          <ul class="post-list">
+            {%- for post in tag[1] -%}
+              <li class="post-item">
+                <a class="post-link" href="{{ post.url | relative_url }}">
+                  <span class="post-title">{{ post.title }}</span>
+                  <span class="post-dots" aria-hidden="true"></span>
+                  <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </article>
+</div>

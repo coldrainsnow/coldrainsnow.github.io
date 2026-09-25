@@ -1,0 +1,61 @@
+---
+layout: default
+---
+{%- assign author_name = site.social.name | default: site.title -%}
+{%- assign site_host = site.url | remove: 'https://' | remove: 'http://' -%}
+<div class="paper paper--doc">
+  {% include doc-navbar.html %}
+
+  <article class="doc" itemscope itemtype="http://schema.org/BlogPosting">
+    <header class="doc-head">
+      <h1 class="doc-title" itemprop="headline">{{ page.title }}</h1>
+      {%- if page.subtitle -%}
+        <p class="doc-subtitle">{{ page.subtitle }}</p>
+      {%- endif -%}
+      <p class="doc-author">{{ author_name }}</p>
+      {%- if site_host != '' -%}
+        <p class="doc-affil"><a href="{{ '/' | absolute_url }}">{{ site_host }}</a></p>
+      {%- endif -%}
+      <p class="doc-date">
+        <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y 年 %-m 月 %-d 日" }}</time>
+      </p>
+      {%- if page.tags.size > 0 -%}
+        <p class="doc-tags">
+          {%- for tag in page.tags -%}
+            {%- assign tag_url = tag | slugify | url_encode | prepend: '/tags/' | append: '/' -%}
+            <a class="tag-link" href="{{ tag_url | relative_url }}">{{ tag }}</a>
+          {%- endfor -%}
+        </p>
+      {%- endif -%}
+    </header>
+
+    <hr class="doc-rule" />
+
+    <details class="doc-toc" id="doc-toc" hidden>
+      <summary class="toc-title">目 录</summary>
+      <nav class="toc-body" aria-label="目录">
+        <ol class="toc-list" id="doc-toc-list"></ol>
+      </nav>
+    </details>
+
+    <div class="doc-body" id="doc-body" itemprop="articleBody">
+      {{ content }}
+    </div>
+
+    <footer class="doc-foot">
+      <div class="doc-pager">
+        {%- if page.previous -%}
+          <a class="pager-prev" href="{{ page.previous.url | relative_url }}">&larr; <span class="pager-title">{{ page.previous.title }}</span></a>
+        {%- else -%}
+          <span class="pager-empty"></span>
+        {%- endif -%}
+        {%- if page.next -%}
+          <a class="pager-next" href="{{ page.next.url | relative_url }}"><span class="pager-title">{{ page.next.title }}</span> &rarr;</a>
+        {%- else -%}
+          <span class="pager-empty"></span>
+        {%- endif -%}
+      </div>
+      <p class="doc-copy"><a href="{{ '/' | relative_url }}">返回文章索引</a></p>
+    </footer>
+  </article>
+</div>

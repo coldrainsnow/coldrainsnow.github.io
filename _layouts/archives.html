@@ -1,0 +1,32 @@
+---
+layout: default
+---
+<div class="paper paper--doc">
+  {% include doc-navbar.html %}
+
+  <article class="doc">
+    <header class="doc-head">
+      <h1 class="doc-title">{{ page.title | default: '归档' }}</h1>
+      <p class="doc-subtitle">共 {{ site.posts | size }} 篇文章</p>
+    </header>
+    <hr class="doc-rule" />
+
+    <div class="doc-body">
+      {%- assign posts_by_year = site.posts | group_by_exp: 'post', 'post.date | date: "%Y"' -%}
+      {%- for year in posts_by_year -%}
+        <h2 id="year-{{ year.name }}">{{ year.name }} <span class="count">{{ year.items | size }}</span></h2>
+        <ul class="post-list">
+          {%- for post in year.items -%}
+            <li class="post-item">
+              <a class="post-link" href="{{ post.url | relative_url }}">
+                <span class="post-title">{{ post.title }}</span>
+                <span class="post-dots" aria-hidden="true"></span>
+                <span class="post-date">{{ post.date | date: "%m-%d" }}</span>
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endfor -%}
+    </div>
+  </article>
+</div>

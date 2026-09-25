@@ -1,0 +1,30 @@
+---
+layout: default
+---
+{%- assign archive_name = page.title | default: page.name -%}
+<div class="paper paper--doc">
+  {% include doc-navbar.html %}
+
+  <article class="doc">
+    <header class="doc-head">
+      <h1 class="doc-title">{{ archive_name }}</h1>
+      <p class="doc-subtitle">标签 · {{ page.posts | size }} 篇文章</p>
+    </header>
+    <hr class="doc-rule" />
+
+    <div class="doc-body">
+      <ul class="post-list">
+        {%- for post in page.posts -%}
+          <li class="post-item">
+            <a class="post-link" href="{{ post.url | relative_url }}">
+              <span class="post-title">{{ post.title }}</span>
+              <span class="post-dots" aria-hidden="true"></span>
+              <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+      <p class="back-link"><a href="{{ '/tags/' | relative_url }}">&larr; 全部标签</a></p>
+    </div>
+  </article>
+</div>

@@ -1,0 +1,786 @@
+/* =============================================================================
+   academic.css — "paper document" theme
+   Visual reference: http://staff.ustc.edu.cn/~lgliu/
+   -----------------------------------------------------------------------------
+   1.  Design tokens
+   2.  Base / reset
+   3.  The paper sheet
+   4.  Top navigation
+   5.  Home page (index)
+   6.  Post list with dot leaders
+   7.  Article header block
+   8.  Table of contents
+   9.  Article body typography
+   10. Code & syntax highlighting
+   11. Tables, quotes, prompts, images
+   12. Footer & pager
+   13. Back-to-top button
+   14. Responsive
+   15. Print (real "PDF" output)
+   ========================================================================== */
+
+/* ---------- 1. Design tokens --------------------------------------------- */
+
+:root {
+  --desk:         #ddddeb;
+  --paper:        #ffffff;
+  --ink:          #57524c;
+  --ink-soft:     #857f78;
+  --accent:       #6293a2;
+  --accent-dark:  #4b7a88;
+  --link:         #0563c1;
+  --link-visited: #954f72;
+  --rule:         #e4e2df;
+  --rule-strong:  #cfccc7;
+  --code-bg:      #f7f7f5;
+  --code-border:  #e6e4e0;
+  --mark-bg:      #fff6d5;
+
+  /* 苹方风格中文栈
+     - Apple 设备：直接用系统「苹方 PingFang SC」
+     - 其它平台：用 MiSans 网页字体（小米开源，见 _layouts/default.html），
+       它和苹方一样方正、几何感强
+     - 最后才回落到系统黑体（Windows 的微软雅黑等） */
+  --sans: "PingFang SC", "MiSans VF", MiSans, "HarmonyOS Sans SC",
+          "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", "微软雅黑",
+          system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "Cascadia Mono", "JetBrains Mono", Consolas, "Liberation Mono", Menlo,
+          "Courier New", monospace;
+
+  /* 字重档位。MiSans VF 是可变字体（150–700），
+     所以 500 / 600 都是真实字重，不会被浏览器合成加粗。 */
+  --w-body: 400; /* 正文 */
+  --w-ui:   500; /* 导航、日期、标签等小字 */
+  --w-head: 600; /* 标题 */
+
+  --paper-width: 1044px;
+  --text-width:  880px;
+  --paper-pad:   56px;
+}
+
+@media (max-width: 1120px) { :root { --paper-pad: 36px; } }
+@media (max-width: 640px)  { :root { --paper-pad: 20px; } }
+
+/* ---------- 2. Base / reset ---------------------------------------------- */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--desk);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: var(--w-body);
+  font-size: 16px;
+  line-height: 1.9;
+  text-align: justify;
+  /* 故意不写 -webkit-font-smoothing: antialiased：
+     它会让 macOS 上的苹方变细，和「稍微粗体」的诉求正好相反，
+     保留系统默认渲染反而更结实。 */
+}
+
+a { color: var(--link); text-decoration: none; }
+a:visited { color: var(--link-visited); }
+a:hover { text-decoration: underline; }
+
+img { max-width: 100%; height: auto; }
+
+.count {
+  font-family: var(--sans);
+  font-size: .78em;
+  font-weight: normal;
+  color: var(--ink-soft);
+}
+
+/* ---------- 3. The paper sheet ------------------------------------------- */
+
+.desk {
+  padding: 22px 16px 72px;
+}
+
+.paper {
+  width: 100%;
+  max-width: var(--paper-width);
+  margin: 0 auto;
+  padding: var(--paper-pad);
+  background: var(--paper);
+  box-shadow: 0 0 4px 4px rgba(0, 0, 0, .3);
+}
+
+/* ---------- 4. Top navigation -------------------------------------------- */
+
+.doc-navbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 24px;
+  margin: 0 0 34px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--accent);
+  text-align: left;
+}
+
+.doc-brand {
+  font-family: var(--sans);
+  font-size: 17px;
+  font-weight: var(--w-head);
+  letter-spacing: .3px;
+  color: var(--accent);
+}
+.doc-brand:visited { color: var(--accent); }
+.doc-brand:hover { text-decoration: none; color: var(--accent-dark); }
+
+.doc-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--sans);
+  font-size: 14px;
+}
+.doc-nav a { color: var(--ink); }
+.doc-nav a:hover { color: var(--accent); text-decoration: none; }
+
+/* ---------- 5. Home page -------------------------------------------------- */
+
+.site-head {
+  padding: 24px 0 34px;
+  text-align: center;
+}
+
+.site-title {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 30px;
+  font-weight: var(--w-head);
+  line-height: 1.35;
+  letter-spacing: .5px;
+  color: var(--ink);
+}
+
+.site-tagline {
+  margin: 10px 0 0;
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: var(--w-ui);
+  color: var(--accent);
+}
+
+.site-desc {
+  max-width: 660px;
+  margin: 12px auto 0;
+  font-size: 14.5px;
+  line-height: 1.8;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+.index-block { margin-top: 8px; }
+
+.sec-title {
+  margin: 34px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--sans);
+  font-size: 18px;
+  font-weight: var(--w-head);
+  color: var(--accent);
+  text-align: left;
+}
+
+.year-title {
+  margin: 22px 0 6px;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: var(--w-ui);
+  color: var(--ink);
+  text-align: left;
+}
+
+.tag-cloud {
+  margin: 0;
+  text-align: left;
+}
+
+.tag-link {
+  display: inline-block;
+  margin: 0 8px 8px 0;
+  padding: 2px 10px;
+  border: 1px solid #dde7ea;
+  border-radius: 2px;
+  background: #f1f5f6;
+  font-family: var(--sans);
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--accent);
+}
+.tag-link:visited { color: var(--accent); }
+.tag-link:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  text-decoration: none;
+}
+
+.site-foot {
+  margin-top: 46px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--sans);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  text-align: center;
+}
+.site-foot p { margin: 0; }
+
+/* ---------- 6. Post list with dot leaders -------------------------------- */
+
+.post-list {
+  margin: 0 0 6px;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.post-item { margin: 0; }
+
+.post-link {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 0;
+  color: var(--ink);
+  font-size: 15.5px;
+  line-height: 1.75;
+}
+.post-link:hover { color: var(--link); text-decoration: none; }
+
+.post-title { flex: 0 1 auto; }
+
+.post-dots {
+  position: relative;
+  top: -.32em;
+  flex: 1 1 auto;
+  min-width: 20px;
+  border-bottom: 1px dotted var(--rule-strong);
+}
+
+.post-date {
+  flex: 0 0 auto;
+  font-family: var(--sans);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.back-link {
+  margin: 26px 0 0;
+  font-family: var(--sans);
+  font-size: 13.5px;
+}
+
+.empty-note {
+  margin: 1.2em 0;
+  padding: .9em 1.2em;
+  border: 1px dashed var(--rule-strong);
+  border-radius: 3px;
+  background: #fafafa;
+  color: var(--ink-soft);
+  font-size: 15px;
+  text-indent: 0;
+}
+.empty-note code {
+  padding: .05em .35em;
+  border: 1px solid var(--code-border);
+  border-radius: 2px;
+  background: var(--code-bg);
+  font-family: var(--mono);
+  font-size: .88em;
+  color: #9b4a3a;
+}
+
+/* ---------- 7. Article header block -------------------------------------- */
+
+.doc-head {
+  max-width: var(--text-width);
+  margin: 0 auto;
+  padding: 6px 0 24px;
+  text-align: center;
+}
+
+.doc-title {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 26px;
+  font-weight: var(--w-head);
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.doc-subtitle {
+  margin: 12px 0 0;
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: var(--w-ui);
+  color: var(--accent);
+}
+
+.doc-author {
+  margin: 18px 0 0;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.doc-affil {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.doc-date {
+  margin: 8px 0 0;
+  font-family: var(--sans);
+  font-size: 13.5px;
+  color: var(--ink-soft);
+}
+
+.doc-tags {
+  margin: 14px 0 0;
+  text-align: center;
+}
+
+.doc-rule {
+  max-width: var(--text-width);
+  margin: 0 auto 26px;
+  border: 0;
+  border-top: 1px solid var(--rule);
+}
+
+/* ---------- 8. Table of contents ----------------------------------------- */
+
+.doc-toc {
+  max-width: var(--text-width);
+  margin: 0 auto 30px;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  background: #f8f9fa;
+  text-align: left;
+}
+.doc-toc[hidden] { display: none; }
+
+.toc-title {
+  margin: 0;
+  padding: 12px 22px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: var(--w-ui);
+  letter-spacing: 3px;
+  color: var(--accent);
+  cursor: pointer;
+  list-style: none;
+}
+.toc-title::-webkit-details-marker { display: none; }
+.toc-title::after {
+  content: "\25BE";
+  float: right;
+  letter-spacing: 0;
+  color: var(--ink-soft);
+}
+.doc-toc:not([open]) .toc-title::after { content: "\25B8"; }
+
+.toc-body {
+  max-height: 320px;
+  padding: 0 22px 14px;
+  overflow-y: auto;
+  border-top: 1px solid var(--rule);
+}
+
+.toc-list {
+  margin: 8px 0 0;
+  padding-left: 22px;
+  font-size: 14.5px;
+  line-height: 1.8;
+}
+.toc-list > li { margin: 4px 0; }
+
+.toc-sub {
+  margin: 2px 0 4px;
+  padding-left: 1.5em;
+  font-size: 13.5px;
+  list-style: circle;
+}
+.toc-sub li { margin: 1px 0; }
+
+.toc-list a { color: var(--ink); }
+.toc-list a:hover,
+.toc-list a.is-active { color: var(--link); text-decoration: none; }
+.toc-list a.is-active { font-weight: var(--w-ui); }
+
+/* ---------- 9. Article body typography ----------------------------------- */
+
+.doc-body {
+  max-width: var(--text-width);
+  margin: 0 auto;
+  font-family: var(--sans);
+  font-weight: var(--w-body);
+  font-size: 16.5px;
+  line-height: 1.9;
+  color: var(--ink);
+  text-align: justify;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.doc-body p {
+  margin: 0 0 .7em;
+  text-indent: 2em;
+}
+
+/* No first-line indent in these contexts */
+.doc-body li > p,
+.doc-body blockquote p,
+.doc-body td p,
+.doc-body th p,
+.doc-body figcaption p,
+.doc-body .prompt-tip p,
+.doc-body .prompt-info p,
+.doc-body .prompt-warning p,
+.doc-body .prompt-danger p,
+.doc-body p:has(> img),
+.doc-body p.no-indent { text-indent: 0; }
+
+.doc-body h1,
+.doc-body h2,
+.doc-body h3,
+.doc-body h4,
+.doc-body h5,
+.doc-body h6 {
+  font-family: var(--sans);
+  font-weight: var(--w-head);
+  line-height: 1.5;
+  text-align: left;
+  text-indent: 0;
+  scroll-margin-top: 24px;
+}
+
+.doc-body h1 { margin: 1.8em 0 .7em; font-size: 21px; color: var(--accent-dark); }
+.doc-body h2 {
+  margin: 2em 0 .8em;
+  padding-bottom: .3em;
+  border-bottom: 1px solid var(--rule);
+  font-size: 19px;
+  color: var(--accent);
+}
+.doc-body h3 { margin: 1.6em 0 .6em; font-size: 16.5px; color: var(--accent-dark); }
+.doc-body h4 { margin: 1.4em 0 .5em; font-size: 15px; color: var(--ink); }
+.doc-body h5,
+.doc-body h6 { margin: 1.2em 0 .5em; font-size: 14.5px; color: var(--ink-soft); }
+
+.doc-body ul,
+.doc-body ol {
+  margin: 0 0 1em;
+  padding-left: 2.2em;
+}
+.doc-body li { margin: .3em 0; }
+.doc-body li::marker { color: var(--accent); }
+
+.doc-body a { text-decoration: none; }
+.doc-body a:hover { text-decoration: underline; }
+
+.doc-body mark { padding: 0 .15em; background: var(--mark-bg); }
+.doc-body strong { color: #3f3b36; font-weight: var(--w-head); }
+.doc-body hr {
+  margin: 2em 0;
+  border: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.doc-body .filepath {
+  padding: .05em .32em;
+  border-radius: 2px;
+  background: var(--code-bg);
+  font-family: var(--mono);
+  font-size: .88em;
+}
+
+/* ---------- 10. Code & syntax highlighting ------------------------------- */
+
+.doc-body code {
+  padding: .1em .35em;
+  border: 1px solid var(--code-border);
+  border-radius: 2px;
+  background: var(--code-bg);
+  font-family: var(--mono);
+  font-size: .875em;
+  color: #9b4a3a;
+}
+
+.doc-body pre {
+  margin: 1.1em 0;
+  padding: .9em 1.1em;
+  overflow-x: auto;
+  border: 1px solid var(--code-border);
+  border-radius: 3px;
+  background: var(--code-bg);
+  font-family: var(--mono);
+  font-size: 13.5px;
+  line-height: 1.65;
+  text-align: left;
+  text-indent: 0;
+  color: #3f3b37;
+}
+
+.doc-body pre code {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: inherit;
+  color: inherit;
+}
+
+.doc-body .highlight {
+  margin: 1.1em 0;
+  overflow: hidden;
+  border: 1px solid var(--code-border);
+  border-radius: 3px;
+  background: var(--code-bg);
+}
+
+.doc-body .highlight pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+
+.doc-body .highlight table {
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-collapse: collapse;
+}
+
+.doc-body .highlight td {
+  padding: 0;
+  border: 0;
+  vertical-align: top;
+}
+
+.doc-body .highlight .rouge-gutter {
+  width: 1%;
+  padding: .9em .7em .9em 1em;
+  border-right: 1px solid var(--code-border);
+  background: #f1f1ee;
+  color: #b3aea8;
+  text-align: right;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.doc-body .highlight .rouge-gutter pre { padding: 0; }
+.doc-body .highlight .rouge-code { padding: .9em 1.1em; }
+
+/* Rouge token palette — muted, print-friendly */
+.highlight .c, .highlight .ch, .highlight .cd, .highlight .cm, .highlight .cpf,
+.highlight .c1, .highlight .cs { color: #9a948c; font-style: italic; }
+.highlight .k, .highlight .kc, .highlight .kd, .highlight .kn, .highlight .kp,
+.highlight .kr { color: #8a4b8a; font-weight: bold; }
+.highlight .kt { color: #2f6f8f; }
+.highlight .o, .highlight .ow { color: #6b635b; }
+.highlight .p, .highlight .pi { color: #6b635b; }
+.highlight .n, .highlight .na, .highlight .nb, .highlight .bp, .highlight .nc,
+.highlight .no, .highlight .nd, .highlight .ni, .highlight .ne, .highlight .nf,
+.highlight .fm, .highlight .nl, .highlight .nn, .highlight .nx, .highlight .py,
+.highlight .nt, .highlight .nv, .highlight .vc, .highlight .vg, .highlight .vi { color: #3f3b37; }
+.highlight .nc, .highlight .nn, .highlight .nf, .highlight .fm { color: #2f6f8f; }
+.highlight .s, .highlight .sa, .highlight .sb, .highlight .sc, .highlight .dl,
+.highlight .sd, .highlight .s2, .highlight .se, .highlight .sh, .highlight .si,
+.highlight .sx, .highlight .sr, .highlight .s1, .highlight .ss { color: #3f7a3f; }
+.highlight .m, .highlight .mb, .highlight .mf, .highlight .mh, .highlight .mi,
+.highlight .mo, .highlight .il { color: #a05a2c; }
+.highlight .gd { color: #a33; }
+.highlight .gi { color: #3a7a3a; }
+.highlight .gh { color: #2f6f8f; font-weight: bold; }
+.highlight .gu { color: #8a4b8a; font-weight: bold; }
+.highlight .err { color: #a33; }
+.highlight .lineno { color: #b3aea8; }
+
+/* ---------- 11. Tables, quotes, prompts, images -------------------------- */
+
+.doc-body table {
+  width: 100%;
+  margin: 1.2em 0;
+  border-collapse: collapse;
+  font-size: .95em;
+}
+.doc-body th,
+.doc-body td {
+  padding: .45em .75em;
+  border: 1px solid var(--rule-strong);
+  text-align: left;
+}
+.doc-body thead th {
+  background: #f1f5f6;
+  font-family: var(--sans);
+  font-size: .95em;
+}
+.doc-body tbody tr:nth-child(even) { background: #fafafa; }
+
+.doc-body blockquote {
+  margin: 1.2em 0;
+  padding: .55em 1.2em;
+  border-left: 3px solid var(--accent);
+  background: #f8fafb;
+  color: #5d5a55;
+}
+.doc-body blockquote p { margin: .35em 0; }
+
+.doc-body .prompt-tip,
+.doc-body .prompt-info,
+.doc-body .prompt-warning,
+.doc-body .prompt-danger {
+  margin: 1.2em 0;
+  padding: .7em 1.1em;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 2px 2px 0;
+  background: #f2f7f8;
+}
+.doc-body .prompt-info    { border-left-color: #5b8fd0; background: #f1f6fc; }
+.doc-body .prompt-warning { border-left-color: #d9a441; background: #fdf8ee; }
+.doc-body .prompt-danger  { border-left-color: #c8593f; background: #fcf1ee; }
+
+.doc-body img {
+  display: block;
+  margin: 1.2em auto;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+}
+
+.doc-body figcaption {
+  margin-top: -.6em;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  text-align: center;
+  text-indent: 0;
+}
+
+/* ---------- 12. Footer & pager ------------------------------------------- */
+
+.doc-foot {
+  max-width: var(--text-width);
+  margin: 46px auto 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--sans);
+  font-size: 13.5px;
+  text-align: left;
+}
+
+.doc-pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+.pager-prev,
+.pager-next { max-width: 47%; line-height: 1.7; }
+.pager-next { text-align: right; }
+.pager-empty { flex: 0 0 auto; }
+
+.doc-copy {
+  margin: 20px 0 0;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+/* ---------- 13. Back-to-top button --------------------------------------- */
+
+#back-to-top {
+  position: fixed;
+  right: 22px;
+  bottom: 26px;
+  z-index: 20;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--rule-strong);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--accent);
+  font-family: var(--sans);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .16);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .25s ease, visibility .25s ease;
+}
+#back-to-top.is-visible { opacity: 1; visibility: visible; }
+#back-to-top:hover { background: var(--accent); color: #fff; }
+
+/* ---------- 14. Responsive ----------------------------------------------- */
+
+@media (max-width: 800px) {
+  /* Mirror the reference site: drop the "desk" and the sheet shadow */
+  body { background: var(--paper); }
+  .desk { padding: 0; }
+  .paper { box-shadow: none; }
+}
+
+@media (max-width: 720px) {
+  body { font-size: 15.5px; }
+  .site-title { font-size: 24px; }
+  .doc-title { font-size: 21px; }
+  .doc-body { font-size: 15.5px; }
+  .doc-navbar { margin-bottom: 26px; }
+  .doc-nav { gap: 14px; font-size: 13.5px; }
+
+  .post-dots { display: none; }
+  .post-link { justify-content: space-between; gap: 12px; }
+  .post-title { flex: 1 1 auto; }
+
+  .doc-pager { flex-direction: column; gap: 10px; }
+  .pager-prev,
+  .pager-next { max-width: 100%; text-align: left; }
+
+  .doc-body .highlight .rouge-gutter { display: none; }
+}
+
+/* ---------- 15. Print ---------------------------------------------------- */
+
+@media print {
+  body { background: #fff; font-size: 11.5pt; }
+  .desk { padding: 0; }
+  .paper {
+    max-width: none;
+    padding: 0;
+    box-shadow: none;
+  }
+  .doc-navbar,
+  .doc-toc,
+  .doc-foot,
+  #back-to-top { display: none !important; }
+  .doc-body { max-width: none; }
+  a { color: var(--ink); text-decoration: none; }
+  .doc-body a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: .82em;
+    color: #666;
+  }
+  .doc-body pre,
+  .doc-body .highlight,
+  .doc-body table { break-inside: avoid; }
+  .doc-body h1,
+  .doc-body h2,
+  .doc-body h3 { break-after: avoid; }
+}

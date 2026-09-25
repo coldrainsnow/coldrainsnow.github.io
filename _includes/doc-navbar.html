@@ -1,0 +1,15 @@
+{%- comment -%}
+  Top navigation bar rendered on every page.
+  Tabs come from the `tabs` collection (see `_tabs/`). Their display name is
+  taken from the `title` front matter field, falling back to the file slug.
+{%- endcomment -%}
+<nav class="doc-navbar" aria-label="站点导航">
+  <a class="doc-brand" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+  <ul class="doc-nav">
+    {%- for tab in site.tabs -%}
+      <li>
+        <a href="{{ tab.url | relative_url }}">{{ tab.title | default: tab.slug }}</a>
+      </li>
+    {%- endfor -%}
+  </ul>
+</nav>

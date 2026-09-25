@@ -1,0 +1,22 @@
+---
+layout: default
+---
+<div class="paper paper--doc">
+  {% include doc-navbar.html %}
+
+  <article class="doc">
+    {%- if page.title -%}
+      <header class="doc-head">
+        <h1 class="doc-title">{{ page.title }}</h1>
+        {%- if page.subtitle -%}
+          <p class="doc-subtitle">{{ page.subtitle }}</p>
+        {%- endif -%}
+      </header>
+      <hr class="doc-rule" />
+    {%- endif -%}
+
+    <div class="doc-body" id="doc-body">
+      {{ content }}
+    </div>
+  </article>
+</div>
